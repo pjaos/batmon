@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="thestyle.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+  <div class="hero">
+    <h1 id="devNameLabel"></h1>
+  </div>
+
+  <div class="tab">
+    <button class="tablinks" id="defaultOpen" onclick="selectTab(event, 'Tab 1')">Battery Status</button>
+    <button class="tablinks" onclick="selectTab(event, 'configTab')">Configuration</button>
+  </div>
+
+  <div id="Tab 1" class="tabcontent">
+    <div class="row form">
+      <TABLE BORDER="0" cellpadding="10">
+        <tr>
+          <TD>Voltage (volts):</TD>
+          <TD><input id="batVoltage" class="btn btn-sm btn-a" type="text" SIZE="24" title="The battery voltage in volts." readonly></TD>
+        </tr>
+        <tr>
+          <TD>Charge current (amps):</TD>
+          <TD><input id="batAmps" class="btn btn-sm btn-a" type="text" SIZE="24" title="The charge current in amps." readonly></TD>
+        </tr>
+        <tr>
+          <TD>Charge power (watts):</TD>
+          <TD><input id="chargePower" class="btn btn-sm btn-a" type="text" SIZE="24" title="The Power currently being usdd to charge the battery." readonly></TD>
+        </tr>
+        <tr>
+          <TD>Temperature (Centigrade):</TD>
+          <TD><input id="tempC" class="btn btn-sm btn-a" type="text" SIZE="24" title="The temperature of the battery in Centigrade." readonly></TD>
+        </tr>
+      </TABLE>
+    </div>
+  </div>
+
+  <div id="configTab" class="tabcontent">
+    <h3>Configuration</h3>
+
+    <div class="row form">
+      <TABLE BORDER="0">
+        <tr>
+          <TD>Battery Charge voltage:</TD>
+          <TD>
+            <input id="chargeLevel5",  type="radio" name="chargeLevel" title="Max battery life, min battery charge"value="5"> 5 (max battery life)<br>
+            <input id="chargeLevel4"", type="radio" name="chargeLevel" value="4"> 4<br>
+            <input id="chargeLevel3"", type="radio" name="chargeLevel" value="3"> 3<br>
+            <input id="chargeLevel2"", type="radio" name="chargeLevel" value="2"> 2<br>
+            <input id="chargeLevel1"", type="radio" name="chargeLevel" title="Min battery life, max battery charge" value="1"> 1 (min battery life)<br>
+          </TD>
+        </tr>
+        <tr>
+          <TD>Device Name:</TD>
+          <TD><input id="devNameText" class="btn btn-sm btn-a" type="text" SIZE="24" title="Enter the name for this device."></TD>
+        </tr>
+
+        <tr>
+          <TD>Group Name:</TD>
+          <TD><input id="groupNameText" class="btn btn-sm btn-a" type="text" SIZE="24" title="Enter the group name for this device in order to restrict access to group members."></TD>
+        </tr>
+
+        <tr>
+          <TD>Enable Syslog</TD>
+          <TD><input id="syslogEnableCheckbox" type="checkbox" title="Enable syslog. Syslog data will be sent to the ICONS Gateway."></TD>
+        </tr>
+
+      </TABLE>
+
+      <div class="row form">
+          <button href="#" class="btn btn-sm btn-b" id="setConfigButton" title="Save configuration to the device.">Save</button>
+          <button href="#" class="btn btn-sm btn-c" id="setDefaultsButton" title="Restore the default settings.">Factory Defaults</button>
+          <button href="#" class="btn btn-sm btn-c" id="rebootButton" title="Reboot.">Reboot</button>
+        </div>
+      </div>
+
+      <div class="hero"><legend>Command History</legend>
+          <div id="cmd_history"></div>
+      </div>
+      
+    </div>
+
+  </div>
+
+  <script src="product.js"></script>
+</body>
+<footer>
+  <p>Version: 1.2</p>
+  <p>Contact information: <a href="mailto:pausten.os@gmail.com">pausten.os@gmail.com</a></p>
+</footer>
+</html>

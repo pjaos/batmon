@@ -1,0 +1,9 @@
+- Load on, cal amps, reboot and current changed why ? 
+  fix required.
+
+- Connect MCP9700 now we have some parts
+- Show battery charged status in battery status html page
+- Add tool tip (possibly change radio button text) to make it 
+  clear what the battery charge voltage radio buttons do.
+  
+
