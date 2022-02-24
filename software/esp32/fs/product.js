@@ -21,11 +21,13 @@ var chargeLevel3         = document.getElementById("chargeLevel3");
 var chargeLevel2         = document.getElementById("chargeLevel2");
 var chargeLevel1         = document.getElementById("chargeLevel1");
 
-var batVoltageText        = document.getElementById("batVoltage");
-var batAmpsText           = document.getElementById("batAmps");
-var chargePowerText       = document.getElementById("chargePower");
-var batteryTempCText      = document.getElementById("tempC");
-var chargeStateText       = document.getElementById("chargeState");
+var batVoltageText       = document.getElementById("batVoltage");
+var batAmpsText          = document.getElementById("batAmps");
+var chargePowerText      = document.getElementById("chargePower");
+var batteryTempCText     = document.getElementById("tempC");
+var chargeStateText      = document.getElementById("chargeState");
+var warningField         = document.getElementById("warningField");
+var warning_message      = "";
 
 var deviceConfig = {}; //Holds the device configuration and is loaded
                        //when updateConfigState() is called.
@@ -154,6 +156,7 @@ function updateState() {
           var charging = data['charging'];
           var fullyCharged = data['fully_charged'];
           var fully_charged_voltage = data["fully_charged_voltage"];
+          warning_message = data["warning_message"];
           
           batAmpsText.value = amps;
           batVoltageText.value = volts;
@@ -172,6 +175,18 @@ function updateState() {
               chargeStateText.style.backgroundColor = "green";
           }
 
+          uo.debug("warning_message.length = "+  warning_message.length);
+          // Display warning to user.
+          if( warning_message.length > 0 ) {
+              warningField.removeAttribute("hidden");
+              warningField.style.backgroundColor = "red";
+              warningField.innerHTML = warning_message;
+              uo.debug(warning_message);
+          }
+          else {
+              warningField.setAttribute("hidden", true);
+              warningField.innerHTML = "";
+          }
       },
     });
 }

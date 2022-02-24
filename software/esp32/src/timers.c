@@ -17,9 +17,23 @@
 
 #define MAX_LOGGER_BUFFER_LEN 129
 
+#define STATUS_MSG_LENGTH 256
+
+#define MIN_BATTERY_TEMP 0.0
+
 static float tempC      = 1000000;
 static float voltage    = 1000000;
 static float amps       = 1000000;
+
+static char warning_message[STATUS_MSG_LENGTH];
+
+/**
+ * @brief Get the status message.
+ * @return The status message text.
+ */
+char *get_warning_message(void) {
+    return warning_message;
+}
 
 /**
  * @brief Get the temperature in °C.
@@ -168,6 +182,16 @@ static void read_adc_temp_cb(void *arg) {
     float mcp9700_volts = temp_adc / MCP9700_CODES_PER_VOLT;
     tempC = ( mcp9700_volts - MCP9700_VOUT_0C ) / MCP9700_TC;
 
+    // If the battery voltage drops below 0 then ensure battery charging is off as
+    // it's dangerous to charge a LION battery at these temperatures.
+    if( tempC < MIN_BATTERY_TEMP ) {
+        set_load_on(false);
+        snprintf(warning_message, STATUS_MSG_LENGTH, "Battery temperature is %.1f °C.<BR>Battery charging disabled as temperature is below %.1f °C which is not safe and will damage the battery.", tempC, MIN_BATTERY_TEMP);
+    }
+    else {
+        strcpy(warning_message, "");
+    }
+
 #ifdef SHOW_TEMP_DEBUG
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "temp_adc=0x%04x, mcp9700_volts=%.3f, tempC=%.1f °C", temp_adc, mcp9700_volts, tempC);
     logger(__FUNCTION__, logger_buffer);
@@ -180,6 +204,7 @@ static void read_adc_temp_cb(void *arg) {
  * @brief Callback to perform startup initialisation after an startup delay.
  **/
 static void startup_init_cb(void *arg) {
+    memset(warning_message, 0 ,  STATUS_MSG_LENGTH);
     if( voltage < get_max_charge_voltage() ) {
         set_load_on(true);
     }
