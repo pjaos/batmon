@@ -215,6 +215,7 @@ static void get_state(struct mg_rpc_request_info *ri,
     bool battery_fully_charged = is_battery_fully_charged();
     float fullyChargedVoltage = get_max_charge_voltage();
     char *warning_message = get_warning_message();
+    int battery_cell_count = get_battery_cell_count();
 
     mg_rpc_send_responsef(ri, "{"
                               "amps:%.1f,"
@@ -223,7 +224,8 @@ static void get_state(struct mg_rpc_request_info *ri,
                               "charging:%d,"
                               "fully_charged:%d,"
                               "fully_charged_voltage:%.1f,"
-                              "warning_message:%Q"
+                              "warning_message:%Q,"
+                              "battery_cell_count:%d"
                               "}"
                               ,
                               amps,
@@ -232,7 +234,8 @@ static void get_state(struct mg_rpc_request_info *ri,
                               charging,
                               battery_fully_charged,
                               fullyChargedVoltage,
-                              warning_message
+                              warning_message,
+                              battery_cell_count
                               );
 
     (void) ri;

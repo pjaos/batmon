@@ -24,5 +24,6 @@ void set_max_battery_charge_voltage_id(int _max_bat_charge_voltage_id);
 float get_max_charge_voltage(void);
 void set_battery_fully_charged(bool fully_charged);
 bool is_battery_fully_charged(void);
+int get_battery_cell_count(void);
 
 #endif /* SRC_INCLUDE_BATTERY_H_ */

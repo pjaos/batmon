@@ -1,7 +1,5 @@
 const CONFIG_OPT    = "config";
 const YDEV_OPT      = "ydev";
-const MIN_FREQ_MHZ  = 138;
-const MAX_FREQ_MHZ  = 4400;
 
 var devNameLabel         = document.getElementById("devNameLabel");
 var webPageTitle         = document.getElementById("webPageTitle");
@@ -27,7 +25,6 @@ var chargePowerText      = document.getElementById("chargePower");
 var batteryTempCText     = document.getElementById("tempC");
 var chargeStateText      = document.getElementById("chargeState");
 var warningField         = document.getElementById("warningField");
-var warning_message      = "";
 
 var deviceConfig = {}; //Holds the device configuration and is loaded
                        //when updateConfigState() is called.
@@ -156,7 +153,13 @@ function updateState() {
           var charging = data['charging'];
           var fullyCharged = data['fully_charged'];
           var fully_charged_voltage = data["fully_charged_voltage"];
-          warning_message = data["warning_message"];
+          var battery_cell_count = data["battery_cell_count"];
+          var warning_message = data["warning_message"];
+          
+          if( battery_cell_count > 0 ) {
+              volts_per_cell = volts / battery_cell_count;
+              batVoltageText.title = "Battery pack has "+volts_per_cell.toFixed(2) + " volts per cell."
+          } 
           
           batAmpsText.value = amps;
           batVoltageText.value = volts;
@@ -257,6 +260,7 @@ function setDeviceConfig() {
       })
     },
   })
+  logCmd("Updated configuration.");
 }
 
 /**
@@ -273,6 +277,7 @@ function setDefaults() {
         alert("The device is now rebooting.");
         document.body.style.cursor = 'wait';
         setTimeout( location.reload() , 1000);
+        logCmd("Set device factory defaults.");
       },
     })
   }
@@ -292,6 +297,7 @@ function reboot() {
         alert("The device is now rebooting.");
         document.body.style.cursor = 'wait';
         setTimeout( location.reload() , 1000);
+        logCmd("Rebooted device.");
       },
     })
   }

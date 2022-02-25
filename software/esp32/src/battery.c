@@ -56,3 +56,10 @@ void set_battery_fully_charged(bool fully_charged) {
 bool is_battery_fully_charged(void) {
     return battery_fully_charged;
 }
+
+/**
+ * @brief Get the number of cells in the battery.
+ */
+int get_battery_cell_count(void) {
+    return LION_SERIES_CELL_COUNT;
+}
