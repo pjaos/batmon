@@ -20,10 +20,12 @@
 #define STATUS_MSG_LENGTH 256
 
 #define MIN_BATTERY_TEMP 0.0
+#define MAX_BATTERY_TEMP 45.0
 
 static float tempC      = 1000000;
 static float voltage    = 1000000;
 static float amps       = 1000000;
+static float lastOnChargeVoltage = 1000000;
 
 static char warning_message[STATUS_MSG_LENGTH];
 
@@ -49,6 +51,13 @@ float get_temp(void) {
  */
 float get_voltage(void) {
     return voltage;
+}
+/**
+ * @brief Get the battery voltage the last time it was read while charging.
+ * @return The voltage.
+ */
+float get_last_on_charge_voltage(void) {
+    return lastOnChargeVoltage;
 }
 
 /**
@@ -144,10 +153,14 @@ static void read_adc_amps_cb(void *arg) {
  **/
 static void read_adc_volts_cb(void *arg) {
     char *logger_buffer = get_logger_buffer();
-    uint16_t volts_adc = read_adc(ADC2, FS_VOLTAGE_4_096, true);
+    uint16_t volts_adc = read_adc(ADC2, FS_VOLTAGE_2_048, true);
     float codes_per_volt = (float)mgos_sys_config_get_batmon_codes_per_volt();
     if( codes_per_volt >= 0.0 ) {
         voltage = (float)volts_adc/codes_per_volt;
+        // If still charging store the battery voltage
+        if( is_load_on() ) {
+            lastOnChargeVoltage = voltage;
+        }
     }
     else {
         voltage = 0.0;
@@ -159,15 +172,20 @@ static void read_adc_volts_cb(void *arg) {
     logger(__FUNCTION__, logger_buffer);
 
 #ifdef SHOW_VOLTS_DEBUG
-    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "volts_adc=0x%04x %d, voltage=%.3f, max charge voltage =%.3f", volts_adc, volts_adc, voltage, max_charge_voltage);
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "volts_adc=0x%04x %d, voltage=%.3f, max charge voltage =%.3f, last_on_charge_voltage=%.3f", volts_adc, volts_adc, voltage, max_charge_voltage, get_last_on_charge_voltage());
     logger(__FUNCTION__, logger_buffer);
 #endif
 
     // Ensure the charger is disconnected when the maximum battery pack voltage is reached.
     if( voltage >= get_max_charge_voltage() ) {
-        set_load_on(false);
-        set_battery_fully_charged(true);
-        logger(__FUNCTION__, "!!! Reached max charge voltage. Battery is now fully charged.");
+        if( mgos_uptime() > 30 ) {
+            set_load_on(false);
+            set_battery_fully_charged(true);
+            logger(__FUNCTION__, "!!! Reached max charge voltage. Battery is now fully charged.");
+        }
+        else {
+            logger(__FUNCTION__, "!!! Waiting for 30 seconds to elapse before turning load off.");
+        }
     }
 
     (void) arg;
@@ -188,9 +206,20 @@ static void read_adc_temp_cb(void *arg) {
         set_load_on(false);
         snprintf(warning_message, STATUS_MSG_LENGTH, "Battery temperature is %.1f °C.<BR>Battery charging disabled as temperature is below %.1f °C which is not safe and will damage the battery.", tempC, MIN_BATTERY_TEMP);
     }
+    // Its also dangerous to charge the battery if it's to hot.
+    else if( tempC > MAX_BATTERY_TEMP ) {
+            set_load_on(false);
+            snprintf(warning_message, STATUS_MSG_LENGTH, "Battery temperature is %.1f °C.<BR>Battery charging disabled as temperature is above %.1f °C which is not safe.<BR>Cool it down and then try charging it.", tempC, MIN_BATTERY_TEMP);
+    }
+    // A message in the initial battery evaluation period
+    else if( mgos_uptime() <= 30 ) {
+        int secs_left = 30 - mgos_uptime();
+        snprintf(warning_message, STATUS_MSG_LENGTH, "%d seconds left evaluating the battery charge.", secs_left);
+    }
     else {
         strcpy(warning_message, "");
     }
+
 
 #ifdef SHOW_TEMP_DEBUG
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "temp_adc=0x%04x, mcp9700_volts=%.3f, tempC=%.1f °C", temp_adc, mcp9700_volts, tempC);
@@ -205,9 +234,9 @@ static void read_adc_temp_cb(void *arg) {
  **/
 static void startup_init_cb(void *arg) {
     memset(warning_message, 0 ,  STATUS_MSG_LENGTH);
-    if( voltage < get_max_charge_voltage() ) {
+//    if( voltage < get_max_charge_voltage() ) {
         set_load_on(true);
-    }
+//    }
     logger(__FUNCTION__, "Turned on the Load.");
 }
 

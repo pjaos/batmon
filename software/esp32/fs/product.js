@@ -155,14 +155,20 @@ function updateState() {
           var fully_charged_voltage = data["fully_charged_voltage"];
           var battery_cell_count = data["battery_cell_count"];
           var warning_message = data["warning_message"];
+          var last_on_charge_voltage = data["last_on_charge_voltage"];
           
+          // If we have more than one cell in the battery and are still charging the battery set the tool tip
+          // to indicate the volts per cell
           if( battery_cell_count > 0 ) {
-              volts_per_cell = volts / battery_cell_count;
-              batVoltageText.title = "Battery pack has "+volts_per_cell.toFixed(2) + " volts per cell."
+              volts_per_cell = last_on_charge_voltage / battery_cell_count;
+              batVoltageText.title = "Battery pack is charged to "+volts_per_cell.toFixed(2) + " volts per cell."
           } 
           
           batAmpsText.value = amps;
-          batVoltageText.value = volts;
+          // Display the last battery voltage when the battery was still being charged
+          // as the voltage will jump when charging is stopped.
+          batVoltageText.value = last_on_charge_voltage;
+
           chargePowerText.value = watts;
           batteryTempCText.value = tempC;
           
@@ -182,7 +188,8 @@ function updateState() {
           // Display warning to user.
           if( warning_message.length > 0 ) {
               warningField.removeAttribute("hidden");
-              warningField.style.backgroundColor = "red";
+              warningField.style.backgroundColor = "white";
+              warningField.style.color = "red";
               warningField.innerHTML = warning_message;
               uo.debug(warning_message);
           }

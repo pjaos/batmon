@@ -5,6 +5,8 @@
 
 static bool battery_fully_charged = false;
 
+#define SHOW_MAX_CHARGE_VOLTAGE 1
+
 /**
  * @return The ID number denoting the battery selected max battery charge voltage (5 - 1).
  *
@@ -37,6 +39,7 @@ float get_max_charge_voltage(void) {
     charge_level_id--;
     float max_charge_voltage = MAX_BATTERY_PACK_VOLTAGE - (charge_level_id*CHARGE_LEVEL_ID_VOLTAGE_STEP_SIZE);
 #ifdef SHOW_MAX_CHARGE_VOLTAGE
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "charge_level_id   =%d", charge_level_id);
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "max_charge_voltage=%.1f", max_charge_voltage);
     logger(__FUNCTION__, logger_buffer);
 #endif
