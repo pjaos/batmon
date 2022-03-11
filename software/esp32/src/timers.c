@@ -22,6 +22,10 @@
 #define MIN_BATTERY_TEMP 0.0
 #define MAX_BATTERY_TEMP 45.0
 
+#define CHECK_CHARGE_PERIOD_SECS 3600
+
+#define BAT_CHARGE_EVAL_SECS 10
+
 static float tempC      = 1000000;
 static float voltage    = 1000000;
 static float amps       = 1000000;
@@ -83,6 +87,12 @@ static void timer1_cb(void *arg) {
 
       snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "uptime: %.2lf, heap (size/free/min) %d/%d/%d, fs (size/free) %d/%d",  mgos_uptime(), heap_zize, free_heap_size, min_free_heap_size, fs_size, fs_free_size);
       logger(__FUNCTION__, logger_buffer);
+    }
+
+    if( mgos_uptime() > CHECK_CHARGE_PERIOD_SECS ) {
+        snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "Restarting to check the battery charge voltage.");
+        logger(__FUNCTION__, logger_buffer);
+        mgos_system_restart_after(250);
     }
 
     (void) arg;
@@ -178,7 +188,7 @@ static void read_adc_volts_cb(void *arg) {
 
     // Ensure the charger is disconnected when the maximum battery pack voltage is reached.
     if( voltage >= get_max_charge_voltage() ) {
-        if( mgos_uptime() > 30 ) {
+        if( mgos_uptime() > BAT_CHARGE_EVAL_SECS ) {
             set_load_on(false);
             set_battery_fully_charged(true);
             logger(__FUNCTION__, "!!! Reached max charge voltage. Battery is now fully charged.");
@@ -212,8 +222,8 @@ static void read_adc_temp_cb(void *arg) {
             snprintf(warning_message, STATUS_MSG_LENGTH, "Battery temperature is %.1f °C.<BR>Battery charging disabled as temperature is above %.1f °C which is not safe.<BR>Cool it down and then try charging it.", tempC, MIN_BATTERY_TEMP);
     }
     // A message in the initial battery evaluation period
-    else if( mgos_uptime() <= 30 ) {
-        int secs_left = 30 - mgos_uptime();
+    else if( mgos_uptime() <= BAT_CHARGE_EVAL_SECS ) {
+        int secs_left = BAT_CHARGE_EVAL_SECS - mgos_uptime();
         snprintf(warning_message, STATUS_MSG_LENGTH, "%d seconds left evaluating the battery charge.", secs_left);
     }
     else {
