@@ -55,7 +55,10 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "silk_over_copper|252000000|105210000|c6df8c05-4285-44fb-865a-1bfc1985ae1c|cf075dd6-a84b-450f-bdd2-def6c2652a1f",
+        "silk_over_copper|252000000|123450000|c6df8c05-4285-44fb-865a-1bfc1985ae1c|2a1818f0-0568-4b09-8efa-e7326139d7a8"
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -126,7 +129,10 @@
         0.4,
         0.5,
         1.0,
-        2.0
+        2.0,
+        3.0,
+        4.0,
+        5.0
       ],
       "via_dimensions": [
         {
