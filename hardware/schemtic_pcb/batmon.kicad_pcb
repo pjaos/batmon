@@ -5,6 +5,10 @@
   )
 
   (paper "A4")
+  (title_block
+    (rev "3.1")
+  )
+
   (layers
     (0 "F.Cu" signal)
     (31 "B.Cu" signal)
@@ -3242,7 +3246,7 @@
   (gr_text "SW" (at 229 131.5) (layer "F.SilkS") (tstamp 78ab49fd-1f22-4ced-8ead-c231e2f0cc80)
     (effects (font (size 1 1) (thickness 0.15)))
   )
-  (gr_text "CWS: Batmon V3.0\n" (at 240.3 101.6) (layer "F.SilkS") (tstamp 790a7af5-fcf5-40e0-b396-fbdab7c5dbb1)
+  (gr_text "CWS: Batmon V3.1\n" (at 240.3 101.6) (layer "F.SilkS") (tstamp 790a7af5-fcf5-40e0-b396-fbdab7c5dbb1)
     (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
   (gr_text "Charger" (at 176.5 112.5 90) (layer "F.SilkS") (tstamp 83145372-e151-4e46-92a1-c957e0191987)
@@ -3256,6 +3260,9 @@
   )
   (gr_text "Serial" (at 245.75 131.5) (layer "F.SilkS") (tstamp bb96a9d3-a014-46a3-a2c6-1b7e39aeeaa1)
     (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (gr_text "- R12 Track missing" (at 173 65.1) (layer "Dwgs.User") (tstamp 3a9c4d0d-b8e3-4e3b-8868-df708ade9fd9)
+    (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
   (dimension (type aligned) (layer "F.Cu") (tstamp 1353279e-34e6-4bfb-a17a-aa12fc62c538)
     (pts (xy 165 132.5) (xy 206.5 132.5))
@@ -3714,6 +3721,8 @@
   (segment (start 193.6375 122.6375) (end 195 124) (width 0.25) (layer "F.Cu") (net 51) (tstamp 774f5782-a3ca-4fc2-8396-1db064e8f965))
   (segment (start 194.8625 129.4) (end 196.2 128.0625) (width 0.25) (layer "F.Cu") (net 51) (tstamp 82d3c384-2ad1-4b86-941e-63010036e8d6))
   (segment (start 193 122.6375) (end 193.6375 122.6375) (width 0.25) (layer "F.Cu") (net 51) (tstamp 973b2bca-4484-4f54-96d8-68086640aef7))
+  (segment (start 195.0875 121.6) (end 194.675 121.6) (width 0.25) (layer "F.Cu") (net 51) (tstamp 9cacb0d9-d577-4ed9-acef-1936b30304fe))
+  (segment (start 194.675 121.6) (end 193.6375 122.6375) (width 0.25) (layer "F.Cu") (net 51) (tstamp c941ec54-73ba-44d4-80d8-cc471212017b))
   (segment (start 193 122.6375) (end 192.1375 122.6375) (width 0.25) (layer "F.Cu") (net 51) (tstamp edffe615-f6aa-48c5-941d-dac5bcaaf3d4))
   (segment (start 192.1375 122.6375) (end 191 121.5) (width 0.25) (layer "F.Cu") (net 51) (tstamp ffde88b8-09d6-4334-9bf7-47e4b942c9d2))
   (via (at 196.2 128) (size 0.8) (drill 0.4) (layers "F.Cu" "B.Cu") (net 51) (tstamp 5c87a29d-4023-4fd3-975a-07040a395528))
