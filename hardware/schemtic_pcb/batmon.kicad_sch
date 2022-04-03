@@ -202,10 +202,10 @@
       (reference "D3") (unit 1) (value "LED") (footprint "Diode_SMD:D_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
     )
     (path "/bf96a11a-d9a1-431a-8efa-c65a2878f16a/1586e942-dabe-4e3c-9fb0-908f9a74ffa4"
-      (reference "D4") (unit 1) (value "3V9") (footprint "Package_TO_SOT_SMD:SOT-23")
+      (reference "D4") (unit 1) (value "4V7") (footprint "Package_TO_SOT_SMD:SOT-23")
     )
     (path "/bf96a11a-d9a1-431a-8efa-c65a2878f16a/594183d1-2f02-4ba3-b3f0-060f1a425ecb"
-      (reference "D5") (unit 1) (value "3V9") (footprint "Package_TO_SOT_SMD:SOT-23")
+      (reference "D5") (unit 1) (value "4V7") (footprint "Package_TO_SOT_SMD:SOT-23")
     )
     (path "/42a6714f-29f5-4288-bf3d-168f4914fc24/5c9fcbce-1e8c-4e46-a805-57d5a35ac865"
       (reference "F1") (unit 1) (value "5A") (footprint "PJA_Fuses:Scherter_OMT125")
@@ -274,7 +274,7 @@
       (reference "R11") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/42a6714f-29f5-4288-bf3d-168f4914fc24/2675e44d-d327-488d-b70b-c5e674f209c9"
-      (reference "R12") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+      (reference "R12") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/bf96a11a-d9a1-431a-8efa-c65a2878f16a/85dc133f-a515-4833-88fa-37a1710be9a0"
       (reference "R13") (unit 1) (value "1K") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
@@ -292,7 +292,7 @@
       (reference "R17") (unit 1) (value "0.16R") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
     (path "/42a6714f-29f5-4288-bf3d-168f4914fc24/54aba7d5-4220-4cd7-aa07-45f9dfe83296"
-      (reference "R18") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+      (reference "R18") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/42a6714f-29f5-4288-bf3d-168f4914fc24/cb83676a-d0e7-49a6-8244-3d33a04fd390"
       (reference "R19") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")

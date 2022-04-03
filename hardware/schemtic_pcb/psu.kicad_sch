@@ -5,7 +5,7 @@
   (paper "A4")
 
   (title_block
-    (rev "2.0")
+    (rev "3.1")
   )
 
   (lib_symbols
@@ -1183,7 +1183,6 @@
     )
   )
 
-
   (junction (at 115.57 115.57) (diameter 0) (color 0 0 0 0)
     (uuid 0fd63885-740c-4de9-912d-b4c053174f76)
   )
@@ -1921,7 +1920,7 @@
     (in_bom yes) (on_board yes)
     (uuid 2675e44d-d327-488d-b70b-c5e674f209c9)
     (property "Reference" "R12" (id 0) (at 104.14 128.27 90))
-    (property "Value" "R" (id 1) (at 104.14 133.35 90))
+    (property "Value" "1k" (id 1) (at 104.14 133.35 90))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (id 2) (at 104.14 132.588 90)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -2012,7 +2011,7 @@
     (in_bom yes) (on_board yes)
     (uuid 54aba7d5-4220-4cd7-aa07-45f9dfe83296)
     (property "Reference" "R18" (id 0) (at 90.17 146.05 90))
-    (property "Value" "R" (id 1) (at 90.17 151.13 90))
+    (property "Value" "1k" (id 1) (at 90.17 151.13 90))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (id 2) (at 90.17 150.368 90)
       (effects (font (size 1.27 1.27)) hide)
     )

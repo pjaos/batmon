@@ -5,7 +5,7 @@
   (paper "A4")
 
   (title_block
-    (rev "3.0")
+    (rev "3.1")
   )
 
   (lib_symbols
@@ -873,7 +873,6 @@
       )
     )
   )
-
 
   (junction (at 17.145 51.435) (diameter 0) (color 0 0 0 0)
     (uuid 0b8cedd7-c84d-4d9d-b0cb-aa4e1e65bf92)
@@ -1861,7 +1860,7 @@
     (property "Reference" "D4" (id 0) (at 217.17 148.59 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "3V9" (id 1) (at 217.17 143.51 90)
+    (property "Value" "4V7" (id 1) (at 217.17 143.51 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Package_TO_SOT_SMD:SOT-23" (id 2) (at 215.9 148.59 0)
@@ -2017,7 +2016,7 @@
     (property "Reference" "D5" (id 0) (at 236.22 148.59 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "3V9" (id 1) (at 236.22 143.51 90)
+    (property "Value" "4V7" (id 1) (at 236.22 143.51 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Package_TO_SOT_SMD:SOT-23" (id 2) (at 233.68 148.59 0)
