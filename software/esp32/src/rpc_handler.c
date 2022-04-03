@@ -203,14 +203,9 @@ static void get_state(struct mg_rpc_request_info *ri,
                                        void *cb_arg,
                                        struct mg_rpc_frame_info *fi,
                                        struct mg_str args) {
-
-    float get_voltage(void);
-    float get_current(void);
-    float get_temp(void);
-
     float tempC = get_temp();
     float amps = get_current();
-    float volts = get_voltage();
+    float battery_voltage = get_battery_voltage();
     bool charging = is_load_on();
     bool battery_fully_charged = is_battery_fully_charged();
     float fullyChargedVoltage = get_max_charge_voltage();
@@ -220,7 +215,7 @@ static void get_state(struct mg_rpc_request_info *ri,
 
     mg_rpc_send_responsef(ri, "{"
                               "amps:%.1f,"
-                              "volts:%.3f,"
+                              "battery_voltage:%.3f,"
                               "last_on_charge_voltage:%.3f,"
                               "tempC:%.1f,"
                               "charging:%d,"
@@ -231,7 +226,7 @@ static void get_state(struct mg_rpc_request_info *ri,
                               "}"
                               ,
                               amps,
-                              volts,
+                              battery_voltage,
                               last_on_charge_voltage,
                               tempC,
                               charging,
@@ -279,13 +274,13 @@ static void set_amps_cal(struct mg_rpc_request_info *ri,
 }
 
 /*
- * @brief Set the calibration of the voltage value in ADC codes per volt.
+ * @brief Set the calibration of the positive battery terminal voltage measurement value in ADC codes per volt.
  * @param ri
  * @param cb_arg
  * @param fi
  * @param args
  */
-static void set_volts_cal(struct mg_rpc_request_info *ri,
+static void set_pvolts_cal(struct mg_rpc_request_info *ri,
                                        void *cb_arg,
                                        struct mg_rpc_frame_info *fi,
                                        struct mg_str args) {
@@ -295,9 +290,40 @@ static void set_volts_cal(struct mg_rpc_request_info *ri,
     int codes_per_volt = 0;
     if (json_scanf(args.p, args.len, ri->args_fmt, &codes_per_volt) == 1) {
             mg_rpc_send_responsef(ri, "%d", codes_per_volt);
-            snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "set_volts_cal: codes_per_volt=%d", codes_per_volt);
+            snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "set_pvolts_cal: codes_per_volt=%d", codes_per_volt);
             logger(__FUNCTION__, logger_buffer);
-            mgos_sys_config_set_batmon_codes_per_volt(codes_per_volt);
+            mgos_sys_config_set_batmon_pbat_codes_per_volt(codes_per_volt);
+            save_cfg(&mgos_sys_config, NULL);
+    } else {
+      mg_rpc_send_errorf(ri, -1, "Bad request. Expected: {\"level\":value}");
+    }
+
+    (void) ri;
+    (void) cb_arg;
+    (void) fi;
+    (void) args;
+}
+
+/*
+ * @brief Set the calibration of the negative battery terminal voltage measurement value in ADC codes per volt.
+ * @param ri
+ * @param cb_arg
+ * @param fi
+ * @param args
+ */
+static void set_nvolts_cal(struct mg_rpc_request_info *ri,
+                                       void *cb_arg,
+                                       struct mg_rpc_frame_info *fi,
+                                       struct mg_str args) {
+
+    char *logger_buffer = get_logger_buffer();
+
+    int codes_per_volt = 0;
+    if (json_scanf(args.p, args.len, ri->args_fmt, &codes_per_volt) == 1) {
+            mg_rpc_send_responsef(ri, "%d", codes_per_volt);
+            snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "set_nvolts_cal: codes_per_volt=%d", codes_per_volt);
+            logger(__FUNCTION__, logger_buffer);
+            mgos_sys_config_set_batmon_nbat_codes_per_volt(codes_per_volt);
             save_cfg(&mgos_sys_config, NULL);
     } else {
       mg_rpc_send_errorf(ri, -1, "Bad request. Expected: {\"level\":value}");
@@ -322,7 +348,8 @@ void rpc_init(void) {
         mg_rpc_add_handler(con, "load", "{on: %d}",  mgos_sys_set_load_on_handler, NULL);
         mg_rpc_add_handler(con, "set_max_battery_charge", "{level: %d}",  set_max_battery_charge, NULL);
         mg_rpc_add_handler(con, "set_amps_cal", "{codes_per_amp: %d}",  set_amps_cal, NULL);
-        mg_rpc_add_handler(con, "set_volts_cal", "{codes_per_volt: %d}",  set_volts_cal, NULL);
+        mg_rpc_add_handler(con, "set_pvolts_cal", "{codes_per_volt: %d}",  set_pvolts_cal, NULL);
+        mg_rpc_add_handler(con, "set_nvolts_cal", "{codes_per_volt: %d}",  set_nvolts_cal, NULL);
         mg_rpc_add_handler(con, "get_state", NULL,  get_state, NULL);
 
 }

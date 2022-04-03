@@ -47,10 +47,11 @@ config_schema:
  - ["i2c.unit_no",  "i", 0, {title: "Which hardware unit to use, 0 or 1"}]
  - ["debug.level", 2] #Debug off initially, debugging can be turned on via RPC.
 
- - ["batmon", "o",                        {"title": "Batmon config space"}]
- - ["batmon.charge_level", "i", 3,        {title: "(5-1) 3 = Set trade off between battery longevity and max single charge level"}]
- - ["batmon.codes_per_amp", "i", 1512,    {title: "The calibration of the current measurement in ADC codes per amp."}]
- - ["batmon.codes_per_volt", "i", 690,    {title: "The calibration of the voltage measurement in ADC codes per volt."}]
+ - ["batmon", "o",                          {"title": "Batmon config space"}]
+ - ["batmon.charge_level", "i", 3,          {title: "(5-1) 3 = Set trade off between battery longevity and max single charge level"}]
+ - ["batmon.codes_per_amp", "i", 5135,      {title: "The calibration of the current measurement in ADC codes per amp."}]
+ - ["batmon.pbat_codes_per_volt", "i", 691, {title: "The calibration of the battery voltage (positive side) measurement in ADC codes per volt."}]
+ - ["batmon.nbat_codes_per_volt", "i", 691, {title: "The calibration of the battery voltage (negative side) measurement in ADC codes per volt."}]
 
 libs:
  - origin: https://github.com/mongoose-os-libs/boards

@@ -26,10 +26,12 @@
 
 #define BAT_CHARGE_EVAL_SECS 10
 
-static float tempC      = 1000000;
-static float voltage    = 1000000;
-static float amps       = 1000000;
-static float lastOnChargeVoltage = 1000000;
+static float tempC                  = 1000000;
+static float pos_bat_voltage        = 1000000;
+static float neg_bat_voltage        = 1000000;
+static float amps                   = 1000000;
+static float lastOnChargeVoltage    = 1000000;
+static float battery_voltage        = 1000000;
 
 static char warning_message[STATUS_MSG_LENGTH];
 
@@ -50,11 +52,11 @@ float get_temp(void) {
 }
 
 /**
- * @brief Get the voltage in volts.
+ * @brief Get the voltage accross the battery in volts.
  * @return The voltage.
  */
-float get_voltage(void) {
-    return voltage;
+float get_battery_voltage(void) {
+    return battery_voltage;
 }
 /**
  * @brief Get the battery voltage the last time it was read while charging.
@@ -103,29 +105,37 @@ static void timer1_cb(void *arg) {
  * @param adc The ADC to read.
  * @param fs_voltage_id The ID of the max ADC voltage.
  * @param single_ended If 1 then read the ADC in single ended mode.
- * @return
+ * @return The ADC reading in two's compliment format.
  */
-static uint16_t read_adc(uint8_t adc, uint8_t fs_voltage_id, bool single_ended) {
-
-    uint32_t adc_value_accum = 0;
+static int16_t read_adc(uint8_t adc, uint8_t fs_voltage_id, bool single_ended) {
+    int16_t adc_value = 0;
+    int32_t adc_value_accum = 0;
     uint8_t adc_value_index;
 
     for( adc_value_index=0 ; adc_value_index < ADC_READING_COUNT ; adc_value_index++ ) {
-        adc_value_accum += (uint32_t)get_adc_value(ADS111X_I2C_ADDRESS, adc, fs_voltage_id, SAMPLES_PER_SECOND_32, single_ended);
+        adc_value = get_adc_twos_compliment_value(ADS111X_I2C_ADDRESS,
+                                                  adc,
+                                                  fs_voltage_id,
+                                                  SAMPLES_PER_SECOND_32,
+                                                  single_ended,
+                                                  true);
+        adc_value_accum += adc_value;
     }
 
-    return (uint16_t)(adc_value_accum/ADC_READING_COUNT);
+    return (int16_t)(adc_value_accum/ADC_READING_COUNT);
 }
 
 /**
  * @brief Callback to periodically read amps adc.
  **/
 static void read_adc_amps_cb(void *arg) {
-    static uint16_t amps_adc_load_off = 0;
+    static int16_t amps_adc_load_off = 0;
     char *logger_buffer = get_logger_buffer();
-    uint16_t amps_adc = read_adc(ADC0, FS_VOLTAGE_4_096, false);
+    int16_t amps_adc = read_adc(ADC0, FS_VOLTAGE_0_256, true);
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "amps_adc=%d", amps_adc);
+    logger(__FUNCTION__, logger_buffer);
     if ( is_load_on() ) {
-        //If amps_adc_load_off value is not 0 then ww have a no current adc value.
+        //If amps_adc_load_off value is not 0 then we have a no current adc value.
         if ( amps_adc_load_off && amps_adc > amps_adc_load_off ) {
             uint16_t adc_delta_codes = amps_adc-amps_adc_load_off;
             float codes_per_amp = (float)mgos_sys_config_get_batmon_codes_per_amp();
@@ -140,11 +150,9 @@ static void read_adc_amps_cb(void *arg) {
                 amps = 0.0;
             }
     #ifdef SHOW_AMPS_DEBUG
-            snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "amps_adc=0x%04x %d, amps_adc_load_off=%d, adc_delta_codes=%d, amps=%.3f", amps_adc,
-                                                                                                                                      amps_adc,
-                                                                                                                                      amps_adc_load_off,
-                                                                                                                                      adc_delta_codes,
-                                                                                                                                      amps);
+            snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "amps_adc_load_off=%d, adc_delta_codes=%d, amps=%.3f", amps_adc_load_off,
+                                                                                                                  adc_delta_codes,
+                                                                                                                  amps);
             logger(__FUNCTION__, logger_buffer);
     #endif
         }
@@ -159,35 +167,50 @@ static void read_adc_amps_cb(void *arg) {
 }
 
 /**
- * @brief Callback to periodically read volts adc.
+ * @brief Callback to periodically read battery -ve side voltage.
  **/
-static void read_adc_volts_cb(void *arg) {
-    char *logger_buffer = get_logger_buffer();
-    uint16_t volts_adc = read_adc(ADC2, FS_VOLTAGE_2_048, true);
-    float codes_per_volt = (float)mgos_sys_config_get_batmon_codes_per_volt();
+static void read_bat_pos_voltage(void *arg) {
+    float max_charge_voltage            = get_max_charge_voltage();
+    bool max_battery_charge_voltage_id  = get_max_battery_charge_voltage_id();
+    float codes_per_volt                = (float)mgos_sys_config_get_batmon_nbat_codes_per_volt();
+    char *logger_buffer                 = get_logger_buffer();
+    int16_t volts_adc                   = read_adc(ADC2, FS_VOLTAGE_2_048, true);
+
     if( codes_per_volt >= 0.0 ) {
-        voltage = (float)volts_adc/codes_per_volt;
-        // If still charging store the battery voltage
-        if( is_load_on() ) {
-            lastOnChargeVoltage = voltage;
-        }
+        pos_bat_voltage = (float)volts_adc/codes_per_volt;
     }
     else {
-        voltage = 0.0;
+        pos_bat_voltage = 0.0;
     }
-    float max_charge_voltage = get_max_charge_voltage();
-    bool max_battery_charge_voltage_id = get_max_battery_charge_voltage_id();
+    // Calc the voltage accross the battery.
+    battery_voltage = pos_bat_voltage - neg_bat_voltage;
+
+    // If still charging store the battery voltage
+    if( is_load_on() ) {
+        lastOnChargeVoltage = battery_voltage;
+    }
+
+#ifdef SHOW_VOLTS_DEBUG
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "pvolts_adc=%d, pve_bat_voltage=%.3f, battery_voltage=%.3f", volts_adc, pos_bat_voltage, battery_voltage);
+    logger(__FUNCTION__, logger_buffer);
+#endif
 
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "max_battery_charge_voltage_id=%d", max_battery_charge_voltage_id);
     logger(__FUNCTION__, logger_buffer);
 
 #ifdef SHOW_VOLTS_DEBUG
-    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "volts_adc=0x%04x %d, voltage=%.3f, max charge voltage =%.3f, last_on_charge_voltage=%.3f", volts_adc, volts_adc, voltage, max_charge_voltage, get_last_on_charge_voltage());
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "max charge voltage =%.3f, last_on_charge_voltage=%.3f", max_charge_voltage, get_last_on_charge_voltage());
+    logger(__FUNCTION__, logger_buffer);
+#endif
+
+#ifdef SHOW_VOLTS_DEBUG
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "lastOnChargeVoltage=%.3f", lastOnChargeVoltage);
     logger(__FUNCTION__, logger_buffer);
 #endif
 
     // Ensure the charger is disconnected when the maximum battery pack voltage is reached.
-    if( voltage >= get_max_charge_voltage() ) {
+    if( battery_voltage >= get_max_charge_voltage() ) {
+        // If the initial power up measurement period has elapsed.
         if( mgos_uptime() > BAT_CHARGE_EVAL_SECS ) {
             set_load_on(false);
             set_battery_fully_charged(true);
@@ -197,6 +220,28 @@ static void read_adc_volts_cb(void *arg) {
             logger(__FUNCTION__, "!!! Waiting for 30 seconds to elapse before turning load off.");
         }
     }
+
+    (void) arg;
+}
+
+/**
+ * @brief Callback to periodically read battery -ve side voltage.
+ **/
+static void read_bat_neg_voltage(void *arg) {
+    char *logger_buffer = get_logger_buffer();
+    int16_t volts_adc = read_adc(ADC1, FS_VOLTAGE_2_048, true);
+    float codes_per_volt = (float)mgos_sys_config_get_batmon_nbat_codes_per_volt();
+
+    if( codes_per_volt >= 0.0 ) {
+        neg_bat_voltage = (float)volts_adc/codes_per_volt;
+    }
+    else {
+        neg_bat_voltage = 0.0;
+    }
+#ifdef SHOW_VOLTS_DEBUG
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "nvolts_adc=%d, nve_bat_voltage=%f", volts_adc, neg_bat_voltage);
+    logger(__FUNCTION__, logger_buffer);
+#endif
 
     (void) arg;
 }
@@ -257,7 +302,8 @@ void init_timers(void) {
     //Setup timer callbacks
     mgos_set_timer(TIMER1_PERIOD_MS, MGOS_TIMER_REPEAT,   timer1_cb, NULL);
     mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_adc_amps_cb, NULL);
-    mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_adc_volts_cb, NULL);
+    mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_bat_pos_voltage, NULL);
+    mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_bat_neg_voltage, NULL);
     mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_adc_temp_cb, NULL);
     //run once timers
     mgos_set_timer(STARTUP_INIT_TIMER1_PERIOD_MS, 0,      startup_init_cb, NULL);

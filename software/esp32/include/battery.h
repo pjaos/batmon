@@ -5,7 +5,8 @@
 #define MAX_ID 5
 
 // 10S/36V LION battery
- #define LION_SERIES_CELL_COUNT          10
+//#define LION_SERIES_CELL_COUNT          10
+#define LION_SERIES_CELL_COUNT          7
 
 // The maximum voltage that for a single LION CELL
 #define MAX_LION_CELL_CHARGE_VOLTAGE    4.2

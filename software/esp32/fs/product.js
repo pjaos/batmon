@@ -147,8 +147,8 @@ function updateState() {
           console.log(data);
           
           var amps = data['amps'];
-          var volts = data['volts'];
-          var watts = (amps * volts).toFixed(1);
+          var battery_voltage = data['battery_voltage'];
+          var watts = (amps * battery_voltage).toFixed(1);
           var tempC = data['tempC'];
           var charging = data['charging'];
           var fullyCharged = data['fully_charged'];
@@ -158,16 +158,15 @@ function updateState() {
           var last_on_charge_voltage = data["last_on_charge_voltage"];
           
           // If we have more than one cell in the battery and are still charging the battery set the tool tip
-          // to indicate the volts per cell
+          // to indicate the volts per cell.
           if( battery_cell_count > 0 ) {
               volts_per_cell = last_on_charge_voltage / battery_cell_count;
               batVoltageText.title = "Battery pack is charged to "+volts_per_cell.toFixed(2) + " volts per cell."
-          } 
-          
+          }
+
           batAmpsText.value = amps;
-          // Display the last battery voltage when the battery was still being charged
-          // as the voltage will jump when charging is stopped.
-          batVoltageText.value = last_on_charge_voltage;
+          // Display the current battery voltage
+          batVoltageText.value = battery_voltage;
 
           chargePowerText.value = watts;
           batteryTempCText.value = tempC;

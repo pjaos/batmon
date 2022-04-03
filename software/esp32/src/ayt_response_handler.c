@@ -33,13 +33,13 @@ void send_ayt_response(struct mg_connection *nc) {
   char *unit_name         = (char *)mgos_sys_config_get_ydev_unit_name();
   char *group_name        = (char *)mgos_sys_config_get_ydev_group_name();
   char *product_id        = (char *)mgos_sys_config_get_ydev_product_id();
-  char *services  		    = "WEB:80";
-  char *os  				      = "MONGOOSE_OS";
-  struct mgos_net_ip_info 	ip_info;
-  struct  json_out 		out1 = JSON_OUT_BUF(jbuf, JSON_BUFFER_SIZE);
+  char *services          = "WEB:80";
+  char *os                = "MONGOOSE_OS";
+  struct mgos_net_ip_info ip_info;
+  struct  json_out out1 = JSON_OUT_BUF(jbuf, JSON_BUFFER_SIZE);
   float temperature = get_temp();
-  float volts = get_voltage();
-  float amps = get_current();
+  float volts       = get_battery_voltage();
+  float amps        = get_current();
 
   //Ensure we don't use NULL pointers.
   if( unit_name == NULL ) {

@@ -13,7 +13,7 @@
 
 void  init_timers(void);
 float get_temp(void);
-float get_voltage(void);
+float get_battery_voltage(void);
 float get_current(void);
 char  *get_warning_message(void);
 float get_last_on_charge_voltage(void);
