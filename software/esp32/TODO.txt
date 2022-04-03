@@ -1,0 +1,5 @@
+- If temp is below zero and goes above zero then reboot
+  to attempt to charge battery.
+- If temp is above max temp and drops below max then reboot
+  to attempt to charge battery.
+- Exponential reboot time to check battery charge ?
