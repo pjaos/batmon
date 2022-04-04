@@ -48,8 +48,8 @@ config_schema:
  - ["debug.level", 2] #Debug off initially, debugging can be turned on via RPC.
 
  - ["batmon", "o",                          {"title": "Batmon config space"}]
- - ["batmon.charge_level", "i", 3,          {title: "(5-1) 3 = Set trade off between battery longevity and max single charge level"}]
- - ["batmon.codes_per_amp", "i", 5135,      {title: "The calibration of the current measurement in ADC codes per amp."}]
+ - ["batmon.charge_level",        "i", 3,   {title: "(5-1) 3 = Set trade off between battery longevity and max single charge level"}]
+ - ["batmon.codes_per_amp",       "i", 5512,{title: "The calibration of the current measurement in ADC codes per amp."}]
  - ["batmon.pbat_codes_per_volt", "i", 691, {title: "The calibration of the battery voltage (positive side) measurement in ADC codes per volt."}]
  - ["batmon.nbat_codes_per_volt", "i", 691, {title: "The calibration of the battery voltage (negative side) measurement in ADC codes per volt."}]
 

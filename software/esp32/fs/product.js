@@ -146,9 +146,9 @@ function updateState() {
           //This shows all the config options available on the device.
           console.log(data);
           
-          var amps = data['amps'];
-          var battery_voltage = data['battery_voltage'];
-          var watts = (amps * battery_voltage).toFixed(1);
+          var amps = data['amps'].toFixed(2);
+          var battery_voltage = data['battery_voltage'].toFixed(2);
+          var watts = (amps * battery_voltage).toFixed(2);
           var tempC = data['tempC'];
           var charging = data['charging'];
           var fullyCharged = data['fully_charged'];

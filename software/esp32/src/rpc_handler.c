@@ -214,7 +214,7 @@ static void get_state(struct mg_rpc_request_info *ri,
     float last_on_charge_voltage = get_last_on_charge_voltage();
 
     mg_rpc_send_responsef(ri, "{"
-                              "amps:%.1f,"
+                              "amps:%.3f,"
                               "battery_voltage:%.3f,"
                               "last_on_charge_voltage:%.3f,"
                               "tempC:%.1f,"
