@@ -15,11 +15,15 @@ curl http://192.168.0.34/rpc/load -d '{"on":1}'
 curl http://192.168.0.34/rpc/load -d '{"on":0}'
 1
 
-curl http://192.168.0.34/rpc/set_amps_cal -d '{"codes_per_amp":1512}'
+curl http://192.168.0.41/rpc/set_amps_cal -d '{"codes_per_amp":5112}'
 1512
+5135
 
-curl http://192.168.0.34/rpc/set_volts_cal -d '{"codes_per_volt":723}'
-723
+curl http://192.168.0.41/rpc/set_pvolts_cal -d '{"codes_per_volt":691}'
+691
+
+curl http://192.168.0.41/rpc/set_nvolts_cal -d '{"codes_per_volt":691}'
+691
 
 curl http://192.168.0.34/rpc/set_max_battery_charge -d '{"level":2}'
 2
