@@ -15,6 +15,17 @@ int get_max_battery_charge_voltage_id(void) {
     return mgos_sys_config_get_batmon_charge_level();
 }
 
+/*
+ * @brief Determine if the user has selected the charge level for storage charge.
+ */
+bool is_storage_charge_selected(void) {
+    bool storage_charge_selected = false;
+    if( mgos_sys_config_get_batmon_charge_level() <= 0 ) {
+        storage_charge_selected = true;
+    }
+    return storage_charge_selected;
+}
+
 /**
  * @brief Set the maximum charge voltage that the battery should reach.
  * @param _max_bat_charge_voltage_id An ID number that defines the maximum
@@ -34,10 +45,17 @@ void set_max_battery_charge_voltage_id(int max_bat_charge_voltage_id) {
  * @return The maximum charge voltage.
  */
 float get_max_charge_voltage(void) {
+    float max_charge_voltage = 0.0;
     char *logger_buffer = get_logger_buffer();
     int charge_level_id = mgos_sys_config_get_batmon_charge_level();
-    charge_level_id--;
-    float max_charge_voltage = MAX_BATTERY_PACK_VOLTAGE - (charge_level_id*CHARGE_LEVEL_ID_VOLTAGE_STEP_SIZE);
+    // If set to -1 then we aim to charge the cells to a level that
+    if( is_storage_charge_selected() ) {
+        max_charge_voltage = CELL_STORAGE_VOLTAGE * LION_SERIES_CELL_COUNT;
+    }
+    else {
+        charge_level_id--;
+        max_charge_voltage = MAX_BATTERY_PACK_VOLTAGE - (charge_level_id*CHARGE_LEVEL_ID_VOLTAGE_STEP_SIZE);
+    }
 #ifdef SHOW_MAX_CHARGE_VOLTAGE
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "charge_level_id   =%d", charge_level_id);
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "max_charge_voltage=%.1f", max_charge_voltage);

@@ -66,10 +66,10 @@ libs:
  - origin: https://github.com/mongoose-os-libs/spi
  - origin: https://github.com/mongoose-os-libs/rpc-service-i2c.git
 # PJA libs
- - origin: ssh://pja@pjas:22//mnt/home_storage/git_repos/mgos/libs/ydev_ayt_handler.git
+ - origin: https://github.com/pjaos/ydev_ayt_handler.git
  - origin: https://github.com/pjaos/syslog.git
  - origin: https://github.com/pjaos/wifi_button_setup.git
- - origin: ssh://pja@pjas:22/mnt/home_storage/git_repos/mgos/libs/ads111x.git
+ - origin: https://github.com/pjaos/ads111x.git
 
 # Used by the mos tool to catch mos binaries incompatible with this file format
 manifest_version: 2017-09-29

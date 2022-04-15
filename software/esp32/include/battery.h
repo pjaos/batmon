@@ -6,10 +6,17 @@
 
 // 10S/36V LION battery
 //#define LION_SERIES_CELL_COUNT          10
+// PJA Change this when released
 #define LION_SERIES_CELL_COUNT          7
 
 // The maximum voltage that for a single LION CELL
 #define MAX_LION_CELL_CHARGE_VOLTAGE    4.2
+
+#define STORAGE_CHARGE_VOLTAGE_MARGIN 0.5
+
+#define CELL_STORAGE_VOLTAGE 3.70
+
+
 // The maximum charge voltage for the battery pack
 #define MAX_BATTERY_PACK_VOLTAGE        LION_SERIES_CELL_COUNT * MAX_LION_CELL_CHARGE_VOLTAGE
 // The charge voltage ID steps in increments of this value
@@ -26,5 +33,6 @@ float get_max_charge_voltage(void);
 void set_battery_fully_charged(bool fully_charged);
 bool is_battery_fully_charged(void);
 int get_battery_cell_count(void);
+bool is_storage_charge_selected(void);
 
 #endif /* SRC_INCLUDE_BATTERY_H_ */

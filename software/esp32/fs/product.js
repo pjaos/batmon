@@ -13,6 +13,7 @@ var setDefaultsButton    = document.getElementById("setDefaultsButton");
 var rebootButton         = document.getElementById("rebootButton");
 var cmdHistoryDiv        = document.getElementById("cmd_history");
 
+var storageVoltageCB     = document.getElementById("storageVoltageCB");
 var chargeLevel5         = document.getElementById("chargeLevel5");
 var chargeLevel4         = document.getElementById("chargeLevel4");
 var chargeLevel3         = document.getElementById("chargeLevel3");
@@ -198,6 +199,16 @@ function updateState() {
           }
       },
     });
+    
+    var sCBDisabled = false;
+    if( storageVoltageCB.checked ) {
+        sCBDisabled = true;
+    }
+    chargeLevel5.disabled = sCBDisabled;
+    chargeLevel4.disabled = sCBDisabled;
+    chargeLevel3.disabled = sCBDisabled;
+    chargeLevel2.disabled = sCBDisabled;
+    chargeLevel1.disabled = sCBDisabled;
 }
 
 /**
@@ -234,7 +245,13 @@ function setDeviceConfig() {
   configData[CONFIG_OPT][YDEV_OPT]["group_name"]    = groupNameText.value;
   configData[CONFIG_OPT][YDEV_OPT]["enable_syslog"] = syslogEnableCheckbox.checked;
   configData[CONFIG_OPT]["batmon"] = {}
-  configData[CONFIG_OPT]["batmon"]["charge_level"] = batChargeVoltageID;
+  if( storageVoltageCB.checked ) {
+      // A charge level of -1 indicates that the storage charge level checkbox has been selected.
+      configData[CONFIG_OPT]["batmon"]["charge_level"] = -1;
+  }
+  else {
+      configData[CONFIG_OPT]["batmon"]["charge_level"] = batChargeVoltageID;
+  }
   let jsonStr = JSON.stringify(configData);
   uo.debug("jsonStr="+jsonStr);
 

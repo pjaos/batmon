@@ -217,7 +217,7 @@ static void read_bat_pos_voltage(void *arg) {
             logger(__FUNCTION__, "!!! Reached max charge voltage. Battery is now fully charged.");
         }
         else {
-            logger(__FUNCTION__, "!!! Waiting for 30 seconds to elapse before turning load off.");
+            logger(__FUNCTION__, "!!! Waiting for 10 seconds to elapse before turning load off.");
         }
     }
 
@@ -253,6 +253,7 @@ static void read_adc_temp_cb(void *arg) {
     char *logger_buffer = get_logger_buffer();
     uint16_t temp_adc = read_adc(ADC3, FS_VOLTAGE_2_048, 1);
     float mcp9700_volts = temp_adc / MCP9700_CODES_PER_VOLT;
+    float max_charge_voltage = get_max_charge_voltage();
     tempC = ( mcp9700_volts - MCP9700_VOUT_0C ) / MCP9700_TC;
 
     // If the battery voltage drops below 0 then ensure battery charging is off as
@@ -270,6 +271,10 @@ static void read_adc_temp_cb(void *arg) {
     else if( mgos_uptime() <= BAT_CHARGE_EVAL_SECS ) {
         int secs_left = BAT_CHARGE_EVAL_SECS - mgos_uptime();
         snprintf(warning_message, STATUS_MSG_LENGTH, "%d seconds left evaluating the battery charge.", secs_left);
+    }
+    else if( is_storage_charge_selected() &&
+        battery_voltage > (max_charge_voltage + STORAGE_CHARGE_VOLTAGE_MARGIN) ) {
+        snprintf(warning_message, STATUS_MSG_LENGTH, "Unable to charge to storage voltage as battery voltage is greater than %.1f volts.<BR>Discharge the battery and try again.", max_charge_voltage );
     }
     else {
         strcpy(warning_message, "");
@@ -289,9 +294,8 @@ static void read_adc_temp_cb(void *arg) {
  **/
 static void startup_init_cb(void *arg) {
     memset(warning_message, 0 ,  STATUS_MSG_LENGTH);
-//    if( voltage < get_max_charge_voltage() ) {
-        set_load_on(true);
-//    }
+    // Initially set battery on charge in order to read the current charge voltage
+    set_load_on(true);
     logger(__FUNCTION__, "Turned on the Load.");
 }
 
