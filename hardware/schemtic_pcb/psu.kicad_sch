@@ -1776,8 +1776,8 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 916d1224-8b00-429b-9931-a4c8c1223a8b)
   )
-  (text "Changes from V1\n\nDONE: C1 footprint to small\nDONE: D1 footprint to large\nDONE: STUCK WITH PIN THROUGH Q1 DPAK Case not TO220, if IRF3710S used.\nLEAVE AS IS: D2 pad layout could be smaller\nLEAVE AS IS: LC PSU filter for ADC ?\nDONE: No Screen print to denote Reset and WiFi SW's\nDONE: Add option to fit 5 x 1ohm resistors to sens current\nQ1 GDS wrong\nDONE: No screen print on connectors to ID them"
-    (at 55.88 40.64 0)
+  (text "Changes from V3\n\n- R12 Track missing\n- Update ADC input protextion zenners from 3V9 to 4V7 volts\n-- Update PCB and schemtaic to v3.1"
+    (at 54.61 64.77 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid b2fb7a1b-c9ba-4acd-a02e-25484040900c)
   )
