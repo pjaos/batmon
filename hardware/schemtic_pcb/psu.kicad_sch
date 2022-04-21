@@ -1771,16 +1771,6 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 254856ae-8e0a-42e4-962d-0ae21f44854b)
   )
-  (text "0A = 2.641V\n2.095A = 3.059V\n199.523 mV increase per Amp"
-    (at 88.9 176.53 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 916d1224-8b00-429b-9931-a4c8c1223a8b)
-  )
-  (text "Changes from V3\n\n- R12 Track missing\n- Update ADC input protextion zenners from 3V9 to 4V7 volts\n-- Update PCB and schemtaic to v3.1"
-    (at 54.61 64.77 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid b2fb7a1b-c9ba-4acd-a02e-25484040900c)
-  )
 
   (label "CHG+" (at 48.26 102.87 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
