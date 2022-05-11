@@ -2244,7 +2244,7 @@
     (property "Reference" "R5" (id 0) (at 147.32 154.94 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "100K" (id 1) (at 146.05 157.48 0)
+    (property "Value" "100K" (id 1) (at 144.78 157.48 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (id 2) (at 149.352 156.21 90)
