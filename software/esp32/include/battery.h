@@ -14,6 +14,7 @@
 
 #define CELL_STORAGE_VOLTAGE 3.70
 
+#define MAX_VOLTAGE_MARGIN 0.1
 
 // The maximum charge voltage for the battery pack
 #define MAX_BATTERY_PACK_VOLTAGE        LION_SERIES_CELL_COUNT * MAX_LION_CELL_CHARGE_VOLTAGE

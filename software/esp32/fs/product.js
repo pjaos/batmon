@@ -1,5 +1,6 @@
 const CONFIG_OPT    = "config";
 const YDEV_OPT      = "ydev";
+const FIFO_SIZE     = 10;
 
 var devNameLabel         = document.getElementById("devNameLabel");
 var webPageTitle         = document.getElementById("webPageTitle");
@@ -78,6 +79,57 @@ class UO {
 }
 var uo = new UO(true);
 
+// @brief A first in first out memory unit
+class FiFo {
+  // @brief Constructor
+  // @param maxLength The max length of the FiFo. If 0 or less then
+  //                  no max length is unlimited.
+  constructor(maxLength) {
+        this.maxLength = maxLength;
+        this._fifo = Array();
+  }
+
+  // @brief Push an object into the Fifo.
+  // If the Fifo is full then remove the last object from the fifo before
+  // pushing the object in.
+  // @return null if there was space in the FiFo to push the object in.
+  //         If not null then return the object removed from the FiFo in
+  //         order to fit the new object into the FiFo.
+  push(object) {
+        var ejectedObject = null;
+        if( this.maxSize <= 0 ) {
+                this._fifo.push(object);
+        }
+        // If max fifo size reached remove an object from the fifo
+        if( this.maxLength > 0 && this._fifo.length == this.maxLength ) {
+                ejectedObject = this.pop();
+        }
+        this._fifo.push(object);
+        return ejectedObject;
+  }
+
+  // @return A value from the FiFo or return null/undefined if empty.
+  pop() {
+        return this._fifo.shift();
+  }
+
+  // @return The number of elements in the fifo.
+  length() {
+        return this._fifo.length;
+  }
+  
+  // @return The entire contents of the FiFo as an array of objects. 
+  contents() {
+    return this._fifo;
+  }
+}
+
+// We use FiFo's' to hold the amps and volts so that the value is smoothed as the 
+// battery nears full charge. In this state the charge is turned on and off
+// periodically, therefore smoothin is useful for the value displayed to the user.
+var ampsFiFo = new FiFo(FIFO_SIZE);
+var voltsFiFo = new FiFo(FIFO_SIZE);
+
 /**
  * @brief log text to the log message area on the page.
  * @param msg
@@ -138,6 +190,24 @@ function updateConfigState() {
   });
 }
 
+// @brief Get the mean value of all values held in the fifo.
+// @param fifo The fifo whose contents are averaged.
+// @return The average value to two decimal places.
+function getMean(fifo) {
+    retValue = 0.0;
+    if( fifo.length() > 0 ) {
+        valueList = fifo.contents();
+        total = 0;
+        for( let index in valueList ) {
+            total += valueList[index];
+        }
+        mean = total/valueList.length;
+        retValue = mean.toFixed(2);
+     }
+     return retValue;
+}
+
+
 function updateState() {
     uo.debug("updateState()");
     $.ajax({
@@ -146,13 +216,22 @@ function updateState() {
           deviceState = data;
           //This shows all the config options available on the device.
           console.log(data);
+
+          // Push the battery volts value into the FiFo
+          voltsFiFo.push(data['battery_voltage']);
+          // Push the current amps value into the FiFo
+          ampsFiFo.push(data['amps']);
           
-          var amps = data['amps'].toFixed(2);
-          var battery_voltage = data['battery_voltage'].toFixed(2);
+          // Get the average amps value held in the FiFo
+          var amps = getMean(ampsFiFo);
+          var charging = true;
+          if( amps <= 0.0 ) {
+            charging = false;
+          }
+          
+          var battery_voltage = getMean(voltsFiFo);
           var watts = (amps * battery_voltage).toFixed(2);
           var tempC = data['tempC'];
-          var charging = data['charging'];
-          var fullyCharged = data['fully_charged'];
           var fully_charged_voltage = data["fully_charged_voltage"];
           var battery_cell_count = data["battery_cell_count"];
           var warning_message = data["warning_message"];
@@ -171,14 +250,13 @@ function updateState() {
 
           chargePowerText.value = watts;
           batteryTempCText.value = tempC;
-          
+
           if( charging ) {
               chargeState.value="Charging";
               chargeStateText.title = "Waiting for battery to reach " + fully_charged_voltage + " volts.";
               chargeStateText.style.backgroundColor = "red";
           }
-          
-          if( fullyCharged ) {
+          else {
               chargeState.value="Fully Charged";
               chargeStateText.title = "The battery has reached a charge voltage of " + fully_charged_voltage + " volts.";
               chargeStateText.style.backgroundColor = "green";
@@ -365,6 +443,9 @@ window.onload = function(e){
   rebootButton.addEventListener("click", reboot);
 
   chargeStateText.style.backgroundColor = "red";
+  
+  uo = new UO(true);
+  ampsFiFo = new FiFo(10);
 
 }
 

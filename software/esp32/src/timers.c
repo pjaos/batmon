@@ -167,17 +167,19 @@ static void read_adc_amps_cb(void *arg) {
 }
 
 /**
- * @brief Callback to periodically read battery -ve side voltage.
+ * @brief Callback to periodically read battery voltage.
  **/
-static void read_bat_pos_voltage(void *arg) {
+static void read_bat_voltage(void *arg) {
     float max_charge_voltage            = get_max_charge_voltage();
     bool max_battery_charge_voltage_id  = get_max_battery_charge_voltage_id();
     float codes_per_volt                = (float)mgos_sys_config_get_batmon_nbat_codes_per_volt();
     char *logger_buffer                 = get_logger_buffer();
-    int16_t volts_adc                   = read_adc(ADC2, FS_VOLTAGE_2_048, true);
+    int16_t pos_volts_adc               = read_adc(ADC2, FS_VOLTAGE_2_048, true);
+    int16_t neg_volts_adc               = read_adc(ADC1, FS_VOLTAGE_2_048, true);
 
     if( codes_per_volt >= 0.0 ) {
-        pos_bat_voltage = (float)volts_adc/codes_per_volt;
+        pos_bat_voltage = (float)pos_volts_adc/codes_per_volt;
+        neg_bat_voltage = (float)neg_volts_adc/codes_per_volt;
     }
     else {
         pos_bat_voltage = 0.0;
@@ -191,7 +193,12 @@ static void read_bat_pos_voltage(void *arg) {
     }
 
 #ifdef SHOW_VOLTS_DEBUG
-    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "pvolts_adc=%d, pve_bat_voltage=%.3f, battery_voltage=%.3f", volts_adc, pos_bat_voltage, battery_voltage);
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "pvolts_adc=%d, pve_bat_voltage=%.3f, battery_voltage=%.3f", pos_volts_adc, pos_bat_voltage, battery_voltage);
+    logger(__FUNCTION__, logger_buffer);
+#endif
+
+#ifdef SHOW_VOLTS_DEBUG
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "nvolts_adc=%d, nve_bat_voltage=%f", neg_volts_adc, neg_bat_voltage);
     logger(__FUNCTION__, logger_buffer);
 #endif
 
@@ -220,28 +227,10 @@ static void read_bat_pos_voltage(void *arg) {
             logger(__FUNCTION__, "!!! Waiting for 10 seconds to elapse before turning load off.");
         }
     }
-
-    (void) arg;
-}
-
-/**
- * @brief Callback to periodically read battery -ve side voltage.
- **/
-static void read_bat_neg_voltage(void *arg) {
-    char *logger_buffer = get_logger_buffer();
-    int16_t volts_adc = read_adc(ADC1, FS_VOLTAGE_2_048, true);
-    float codes_per_volt = (float)mgos_sys_config_get_batmon_nbat_codes_per_volt();
-
-    if( codes_per_volt >= 0.0 ) {
-        neg_bat_voltage = (float)volts_adc/codes_per_volt;
+    else if( battery_voltage < get_max_charge_voltage()-MAX_VOLTAGE_MARGIN) {
+        set_load_on(true);
+        logger(__FUNCTION__, "!!! Turned battery charging back on.");
     }
-    else {
-        neg_bat_voltage = 0.0;
-    }
-#ifdef SHOW_VOLTS_DEBUG
-    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "nvolts_adc=%d, nve_bat_voltage=%f", volts_adc, neg_bat_voltage);
-    logger(__FUNCTION__, logger_buffer);
-#endif
 
     (void) arg;
 }
@@ -306,8 +295,7 @@ void init_timers(void) {
     //Setup timer callbacks
     mgos_set_timer(TIMER1_PERIOD_MS, MGOS_TIMER_REPEAT,   timer1_cb, NULL);
     mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_adc_amps_cb, NULL);
-    mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_bat_pos_voltage, NULL);
-    mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_bat_neg_voltage, NULL);
+    mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_bat_voltage, NULL);
     mgos_set_timer(READ_ADC_PERIOD_MS, MGOS_TIMER_REPEAT, read_adc_temp_cb, NULL);
     //run once timers
     mgos_set_timer(STARTUP_INIT_TIMER1_PERIOD_MS, 0,      startup_init_cb, NULL);
