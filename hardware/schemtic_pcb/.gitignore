@@ -1,0 +1,6 @@
+batmon-backups/
+batmon.csv
+batmon.xml
+batmon_debug-backups/
+gerbers/batmon-bottom-pos.csv
+gerbers/batmon-top-pos.csv
