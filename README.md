@@ -29,7 +29,7 @@ An initial set of requirements for the system is shown below.
 * Turn off charging if the battery temperature is too hot (> 45°C)g.
 
 ## Hardware.
-The hardware design uses an ESP32 CPU which provides the WiFi connectivity. An ADS1115 I2C 16 bit ADC device is used to measure the battery voltage, charge current and battery temperature. A Mosfet is used to turn off the battery charge once it reaches the configured charge voltage.
+The hardware design uses an ESP32 CPU which provides the WiFi connectivity. An ADS1115 I2C 16 bit ADC device is used to measure the battery voltage, charge current and battery temperature. A Mosfet is used to turn off the battery charge once it reaches the configured charge voltage. The case for the module was 3D printed to provide a robust mount for the module inside the battery case.
 
 ![Top Level Schematic](images/top_schematic.png "Top Level Schematic")
 ![Top Level Schematic](images/psu_schematic.png "PSU Schematic")
