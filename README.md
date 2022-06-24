@@ -15,10 +15,10 @@ that the battery is capable of could be increased by four times. The trade off f
 loose about 25 % of the range on a single charge. The batmon device allows the user to set this trade off
 by selecting the maximum charge voltage in five 0.05 volt steps from 4.2 to 4.0 volts.
 
-The device also ensures that the battery is not charged when to cold or hot which also limit the batteries
+The device also ensures that the battery is not charged when to cold or hot which also limits the batteries
 lifetime. Charging at temperatures of 0°C or below can also be dangerous.
 
-As stated previously this project is primarily aimed at improving the lifetime of Ebike batteries although the hardware could be used for other batter voltages with slight tweaks to the software. The device provides a WiFi connection. This can connect to your home WiFi network or run in stand alone (AP) mode. The [Yview App](https://github.com/pjaos/yview/tree/master/gui) can be used (Android phone/tablet or a Windows, Linux PC) to access the state of the battery (charge voltage/current etc).
+As stated previously this project is primarily aimed at improving the lifetime of Ebike batteries although the hardware could be used for other battery voltages with slight changes to the software. The device provides a WiFi connection. This can connect to your home WiFi network or run in stand alone (AP) mode. The [Yview App](https://github.com/pjaos/yview/tree/master/gui) can be used (Android phone/tablet or a Windows, Linux PC) to access the state of the battery (charge voltage/current etc) and configure the device settings.
 
 ## System Requirements
 An initial set of requirements for the system is shown below.
