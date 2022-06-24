@@ -5,3 +5,5 @@ batmon_debug-backups/
 gerbers/batmon-bottom-pos.csv
 gerbers/batmon-top-pos.csv
 batmon
+fp-info-cache
+_autosave-batmon.kicad_pcb
