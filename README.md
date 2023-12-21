@@ -37,6 +37,13 @@ The hardware design uses an ESP32 CPU which provides the WiFi connectivity. An A
 ![PCB](images/pcb.png "PCB") ![PCB](images/pcb1.png "PCB Assembled")
 ![PCB](images/pcb2.png "PCB Assembled (Reduced Size, Side 1)")
 ![PCB](images/pcb3.png "PCB Assembled (Side 2)")
+
+Module installed into case in charger lead.
+
+![PCB](images/inline_case.jpg "PCB Assembled (Inserting into case)")
+
+Module installed inside Ebike battery box.
+
 ![PCB](images/pcb4.png "PCB Assembled (Inserting into case)")
 ![PCB](images/module1.png "Module Assembled (Side 2)")
 ![PCB](images/module2.png "Module Assembled (Side 1)")
