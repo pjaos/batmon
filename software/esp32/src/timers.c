@@ -20,7 +20,7 @@
 #define STATUS_MSG_LENGTH 256
 
 #define MIN_BATTERY_TEMP 0.0
-#define MAX_BATTERY_TEMP 45.0
+#define MAX_BATTERY_TEMP 60.0
 
 #define CHECK_CHARGE_PERIOD_SECS 3600*5
 
@@ -254,7 +254,7 @@ static void read_adc_temp_cb(void *arg) {
     // Its also dangerous to charge the battery if it's to hot.
     else if( tempC > MAX_BATTERY_TEMP ) {
             set_load_on(false);
-            snprintf(warning_message, STATUS_MSG_LENGTH, "Battery temperature is %.1f °C.<BR>Battery charging disabled as temperature is above %.1f °C which is not safe.<BR>Cool it down and then try charging it.", tempC, MIN_BATTERY_TEMP);
+            snprintf(warning_message, STATUS_MSG_LENGTH, "Battery temperature is %.1f °C.<BR>Battery charging disabled as temperature is above %.1f °C which is not safe.<BR>Cool it down and then try again.", tempC, MAX_BATTERY_TEMP);
     }
     // A message in the initial battery evaluation period
     else if( mgos_uptime() <= BAT_CHARGE_EVAL_SECS ) {
@@ -271,6 +271,7 @@ static void read_adc_temp_cb(void *arg) {
 
 
 #ifdef SHOW_TEMP_DEBUG
+    logger(__FUNCTION__, logger_buffer);
     snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "temp_adc=0x%04x, mcp9700_volts=%.3f, tempC=%.1f °C", temp_adc, mcp9700_volts, tempC);
     logger(__FUNCTION__, logger_buffer);
 #endif

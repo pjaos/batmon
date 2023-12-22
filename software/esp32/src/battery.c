@@ -20,9 +20,13 @@ int get_max_battery_charge_voltage_id(void) {
  */
 bool is_storage_charge_selected(void) {
     bool storage_charge_selected = false;
+    char *logger_buffer = get_logger_buffer();
+
     if( mgos_sys_config_get_batmon_charge_level() <= 0 ) {
         storage_charge_selected = true;
     }
+    snprintf(logger_buffer, MAX_LOGGER_BUFFER_LEN, "storage_charge_selected=%d", storage_charge_selected);
+    logger(__FUNCTION__, logger_buffer);
     return storage_charge_selected;
 }
 
